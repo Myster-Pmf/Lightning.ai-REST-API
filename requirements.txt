@@ -1,0 +1,7 @@
+Flask
+lightning-sdk
+requests
+python-dotenv
+werkzeug
+flask-cors
+gunicorn
