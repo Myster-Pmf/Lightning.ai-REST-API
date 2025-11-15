@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightning API Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .lightning-icon {
+            font-size: 1.5em;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .nav-tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-tab.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .nav-tab:hover {
+            background: #764ba2;
+            color: white;
+        }
+        
+        .tab-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            min-height: 400px;
+        }
+        
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        .logs-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+        
+        .log-entry {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s;
+        }
+        
+        .log-entry:hover {
+            background: #f1f5f9;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .log-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .log-method {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .log-method.GET { background: #10b981; color: white; }
+        .log-method.POST { background: #3b82f6; color: white; }
+        .log-method.PUT { background: #f59e0b; color: white; }
+        .log-method.DELETE { background: #ef4444; color: white; }
+        
+        .log-status {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .log-status.success { background: #10b981; color: white; }
+        .log-status.error { background: #ef4444; color: white; }
+        
+        .log-path {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: #4a5568;
+        }
+        
+        .log-time {
+            color: #718096;
+            font-size: 0.8em;
+        }
+        
+        .docs-section {
+            margin-bottom: 30px;
+        }
+        
+        .docs-section h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+        
+        .code-block {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 10px 0;
+            position: relative;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4a5568;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        
+        .copy-btn:hover {
+            background: #2d3748;
+        }
+        
+        .refresh-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .refresh-btn:hover {
+            background: #059669;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .login-form {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 350px;
+        }
+        
+        .login-form h2 {
+            margin-bottom: 30px;
+            color: #4a5568;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .login-form button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .login-form button:hover {
+            background: #764ba2;
+        }
+        
+        .error-message {
+            color: #ef4444;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginContainer" class="login-container">
+        <div class="login-form">
+            <h2>⚡ Lightning API Admin</h2>
+            <input type="password" id="passwordInput" placeholder="Enter admin password" onkeypress="handleEnter(event)">
+            <button onclick="login()">Login</button>
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="dashboardContainer" style="display: none;">
+        <div class="container">
+            <div class="header">
+                <h1><span class="lightning-icon">⚡</span> Lightning API Admin Dashboard</h1>
+                <p>Monitor API usage, view documentation, and manage your Lightning AI Studio API</p>
+            </div>
+
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+                <button class="nav-tab" onclick="showTab('logs')">Request Logs</button>
+                <button class="nav-tab" onclick="showTab('docs')">API Documentation</button>
+            </div>
+
+            <div class="tab-content">
+                <div id="overview" class="tab-pane active">
+                    <h2>API Usage Overview</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalRequests">0</div>
+                            <div class="stat-label">Total Requests</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="successRequests">0</div>
+                            <div class="stat-label">Successful</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="errorRequests">0</div>
+                            <div class="stat-label">Errors</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="uniqueUsers">0</div>
+                            <div class="stat-label">Unique Users</div>
+                        </div>
+                    </div>
+                    <button class="refresh-btn" onclick="refreshStats()">Refresh Stats</button>
+                </div>
+
+                <div id="logs" class="tab-pane">
+                    <h2>Recent API Requests</h2>
+                    <button class="refresh-btn" onclick="refreshLogs()">Refresh Logs</button>
+                    <div class="logs-container" id="logsContainer">
+                        <div style="text-align: center; padding: 40px; color: #718096;">
+                            Loading logs...
+                        </div>
+                    </div>
+                </div>
+
+                <div id="docs" class="tab-pane">
+                    <h2>API Documentation & Examples</h2>
+                    
+                    <div class="docs-section">
+                        <h3>🚀 Quick Start Examples</h3>
+                        
+                        <h4>Get Machine Types & Pricing</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+curl -F "auth_file=@auth.json" <span class="api-url">/api/v2/machine-types</span>
+                        </div>
+                        
+                        <h4>Start Studio with T4 GPU</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+curl -F "auth_file=@auth.json" -F "machine_type=T4" <span class="api-url">/api/v2/start</span>
+                        </div>
+                        
+                        <h4>Check Studio Status</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+curl -F "auth_file=@auth.json" <span class="api-url">/api/v2/status</span>
+                        </div>
+                        
+                        <h4>Switch Machine Type (Seamless)</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+curl -F "auth_file=@auth.json" -F "machine_type=L4" <span class="api-url">/api/v2/switch-machine</span>
+                        </div>
+                        
+                        <h4>Execute Command</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+curl -F "auth_file=@auth.json" -F "command=python --version" <span class="api-url">/api/v2/execute</span>
+                        </div>
+                    </div>
+                    
+                    <div class="docs-section">
+                        <h3>🌐 JavaScript Examples</h3>
+                        
+                        <h4>Get Machine Types</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+const formData = new FormData();
+formData.append('auth_file', authFile);
+
+fetch('<span class="api-url">/api/v2/machine-types</span>', {
+    method: 'GET',
+    body: formData
+})
+.then(response => response.json())
+.then(data => console.log(data));
+                        </div>
+                        
+                        <h4>Start Studio</h4>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+const formData = new FormData();
+formData.append('auth_file', authFile);
+formData.append('machine_type', 'T4');
+
+fetch('<span class="api-url">/api/v2/start</span>', {
+    method: 'POST',
+    body: formData
+})
+.then(response => response.json())
+.then(data => console.log(data));
+                        </div>
+                    </div>
+                    
+                    <div class="docs-section">
+                        <h3>📝 Auth File Format</h3>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+{
+  "studio_name": "my-studio",
+  "teamspace": "my-team",
+  "username": "my-username",
+  "lightning_user_id": "your-lightning-user-id",
+  "lightning_api_key": "your-lightning-api-key"
+}
+                        </div>
+                    </div>
+                    
+                    <div class="docs-section">
+                        <h3>🎯 Available Machine Types</h3>
+                        <div class="code-block">
+                            <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+# CPU Machines
+CPU, DATA_PREP, DATA_PREP_MAX
+
+# Single GPU
+T4, L4, L40, A10G
+
+# Multi GPU  
+T4_X_4, L4_X_4, L4_X_8, L40_X_4, L40_X_8
+A100_X_8, H100_X_8
+
+# Pricing: Use /machine-types endpoint for real-time pricing
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isAuthenticated = false;
+        const API_BASE = window.location.origin;
+        
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                login();
+            }
+        }
+        
+        function login() {
+            const password = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('errorMessage');
+            
+            if (password === 'lightning123') {
+                isAuthenticated = true;
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('dashboardContainer').style.display = 'block';
+                refreshStats();
+                refreshLogs();
+            } else {
+                errorDiv.textContent = 'Invalid password';
+                errorDiv.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+        
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function refreshStats() {
+            fetch('/admin/api/stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('totalRequests').textContent = data.total_requests || 0;
+                    document.getElementById('successRequests').textContent = data.success_requests || 0;
+                    document.getElementById('errorRequests').textContent = data.error_requests || 0;
+                    document.getElementById('uniqueUsers').textContent = data.unique_users || 0;
+                })
+                .catch(error => console.error('Error loading stats:', error));
+        }
+        
+        function refreshLogs() {
+            fetch('/admin/api/logs')
+                .then(response => response.json())
+                .then(data => {
+                    const logsContainer = document.getElementById('logsContainer');
+                    
+                    if (data.logs && data.logs.length > 0) {
+                        logsContainer.innerHTML = data.logs.map(log => `
+                            <div class="log-entry">
+                                <div class="log-meta">
+                                    <div>
+                                        <span class="log-method ${log.method}">${log.method}</span>
+                                        <span class="log-path">${log.path}</span>
+                                    </div>
+                                    <div>
+                                        <span class="log-status ${log.status_code < 400 ? 'success' : 'error'}">${log.status_code}</span>
+                                        <span class="log-time">${new Date(log.timestamp).toLocaleString()}</span>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.9em; color: #718096;">
+                                    User: ${log.user || 'Unknown'} | Duration: ${log.duration}ms
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        logsContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #718096;">No logs found</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading logs:', error);
+                    document.getElementById('logsContainer').innerHTML = '<div style="text-align: center; padding: 40px; color: #ef4444;">Error loading logs</div>';
+                });
+        }
+        
+        function copyToClipboard(button) {
+            const codeBlock = button.parentElement;
+            let text = codeBlock.textContent.replace('Copy', '').trim();
+            
+            // Replace placeholder URLs with actual domain
+            text = text.replace(/<span class="api-url">(.*?)<\/span>/g, API_BASE + '$1');
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 1000);
+            });
+        }
+        
+        // Replace all API URLs on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.api-url').forEach(element => {
+                element.textContent = API_BASE + element.textContent;
+            });
+        });
+        
+        // Auto-refresh logs every 30 seconds when on logs tab
+        setInterval(() => {
+            if (isAuthenticated && document.getElementById('logs').classList.contains('active')) {
+                refreshLogs();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
