@@ -461,7 +461,7 @@ A100_X_8, H100_X_8
             const password = document.getElementById('passwordInput').value;
             const errorDiv = document.getElementById('errorMessage');
             
-            if (password === 'lightning123') {
+            if (password === '{{ admin_password }}') {
                 isAuthenticated = true;
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('dashboardContainer').style.display = 'block';

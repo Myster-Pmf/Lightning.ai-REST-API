@@ -13,7 +13,7 @@ ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'lightning123')
 @admin_bp.route('/admin')
 def admin_dashboard():
     """Main admin dashboard"""
-    return render_template('admin.html')
+    return render_template('admin.html', admin_password=ADMIN_PASSWORD)
 
 @admin_bp.route('/admin/api/stats')
 def get_stats():
