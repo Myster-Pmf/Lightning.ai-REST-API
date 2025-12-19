@@ -76,52 +76,9 @@ def create_app():
     
     @app.route('/docs')
     def api_docs():
-        """API information endpoint"""
-        return {
-            "name": "Lightning-API",
-            "version": "2.0.0",
-            "description": "REST API for Lightning AI Studio management",
-            "api_versions": {
-                "v2": {
-                    "description": "Stateless API with multiple auth methods",
-                    "auth_required": "Pass credentials with each request",
-                    "base_path": "/api/v2"
-                }
-            },
-            "admin_dashboard": "/admin",
-            "endpoints": {
-                "studio_management": {
-                    "list_resources": "/api/v2/list",
-                    "list_studios": "/api/v2/list/studios", 
-                    "status": "/api/v2/status",
-                    "create": "/api/v2/create",
-                    "start": "/api/v2/start",
-                    "stop": "/api/v2/stop"
-                },
-                "operations": {
-                    "execute": "/api/v2/execute",
-                    "upload": "/api/v2/upload",
-                    "download": "/api/v2/download/<path>",
-                    "files": "/api/v2/files"
-                },
-                "utility": {
-                    "machine_types": "/api/machine-types",
-                    "balance": "/api/v2/balance",
-                    "health": "/health"
-                }
-            },
-            "examples": {
-                "v2_auth_methods": [
-                    "Headers: X-Studio-Name, X-Teamspace, X-Username, X-Lightning-User-ID, X-Lightning-API-Key",
-                    "JSON body: {'auth': {'studio_name': '...', 'teamspace': '...', 'username': '...', 'lightning_user_id': '...', 'lightning_api_key': '...'}}",
-                    "Query params: ?studio_name=...&teamspace=...&username=...&lightning_user_id=...&lightning_api_key=..."
-                ],
-                "file_auth_methods": [
-                    "Upload JSON file with credentials: curl -F 'auth_file=@auth.json' /api/file/status",
-                    "Auth file format: {'studio_name': '...', 'teamspace': '...', 'username': '...', 'lightning_user_id': '...', 'lightning_api_key': '...'}"
-                ]
-            }
-        }
+        """API documentation dashboard"""
+        from flask import render_template
+        return render_template('docs.html')
     
     @app.route('/health')
     def health():

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightning-API Documentation ⚡</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #792ee5;
+            --secondary: #667eea;
+            --accent: #00d2ff;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(121, 46, 229, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(0, 210, 255, 0.1) 0%, transparent 50%);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 99px;
+            background: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(121, 46, 229, 0.3);
+        }
+
+        .section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .endpoint-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .endpoint-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .method {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: inline-block;
+        }
+
+        .method.GET { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .method.POST { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+
+        .path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--secondary);
+            margin-bottom: 8px;
+            word-break: break-all;
+        }
+
+        .desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .copy-hint {
+            position: absolute;
+            right: 20px;
+            top: 24px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .endpoint-card:hover .copy-hint {
+            opacity: 1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Lightning-API</div>
+            <p class="subtitle">The complete REST interface for Lightning AI Studio automation. Stateless, secure, and developer-friendly.</p>
+            <div class="badge">v2.0.0 Stable</div>
+        </header>
+
+        <main>
+            <section class="section">
+                <h2 class="section-title">Studio Management</h2>
+                <div class="grid">
+                    <div class="endpoint-card" onclick="copyPath('/api/v2/list')">
+                        <div class="method GET">GET</div>
+                        <div class="path">/api/v2/list</div>
+                        <p class="desc">Retrieve all available studios, teamspaces, and user metadata for the credentials provided.</p>
+                        <div class="copy-hint">Copy</div>
+                    </div>
+                    <div class="endpoint-card" onclick="copyPath('/api/v2/status')">
+                        <div class="method POST">POST</div>
+                        <div class="path">/api/v2/status</div>
+                        <p class="desc">Get high-fidelity real-time status, hardware specs, and true uptime of your specific studio.</p>
+                        <div class="copy-hint">Copy</div>
+                    </div>
+                    <div class="endpoint-card" onclick="copyPath('/api/v2/start')">
+                        <div class="method POST">POST</div>
+                        <div class="path">/api/v2/start</div>
+                        <p class="desc">Power on your studio. Supports dynamic machine scaling (T4, L4, A100, etc.) on request.</p>
+                        <div class="copy-hint">Copy</div>
+                    </div>
+                    <div class="endpoint-card" onclick="copyPath('/api/v2/stop')">
+                        <div class="method POST">POST</div>
+                        <div class="path">/api/v2/stop</div>
+                        <p class="desc">Safely shutdown your studio environment to optimize credit burn.</p>
+                        <div class="copy-hint">Copy</div>
+                    </div>
+                    <div class="endpoint-card" onclick="copyPath('/api/v2/switch-machine')">
+                        <div class="method POST">POST</div>
+                        <div class="path">/api/v2/switch-machine</div>
+                        <p class="desc">Hot-swap underlying hardware specs without losing your studio state.</p>
+                        <div class="copy-hint">Copy</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">Remote Operations</h2>
+                <div class="grid">
+                    <div class="endpoint-card" onclick="copyPath('/api/v2/execute')">
+                        <div class="method POST">POST</div>
+                        <div class="path">/api/v2/execute</div>
+                        <p class="desc">Execute shell or python scripts directly on the target instance with real-time stdout/stderr capture.</p>
+                        <div class="copy-hint">Copy</div>
+                    </div>
+                    <div class="endpoint-card" onclick="copyPath('/api/v2/upload')">
+                        <div class="method POST">POST</div>
+                        <div class="path">/api/v2/upload</div>
+                        <p class="desc">Direct binary upload to home/teamspace of the studio. No local SDK required.</p>
+                        <div class="copy-hint">Copy</div>
+                    </div>
+                    <div class="endpoint-card" onclick="copyPath('/api/v2/download/<path>')">
+                        <div class="method GET">GET</div>
+                        <div class="path">/api/v2/download/&lt;path&gt;</div>
+                        <p class="desc">Secure file retrieval using the standard HTTP protocol. Stream multi-GB files with ease.</p>
+                        <div class="copy-hint">Copy</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title">Infrastructure Utils</h2>
+                <div class="grid">
+                    <div class="endpoint-card" onclick="copyPath('/api/v2/balance')">
+                        <div class="method GET">GET</div>
+                        <div class="path">/api/v2/balance</div>
+                        <p class="desc">Get detailed credit usage and remaining balance for the authenticated Lightning AI account.</p>
+                        <div class="copy-hint">Copy</div>
+                    </div>
+                    <div class="endpoint-card" onclick="copyPath('/api/machine-types')">
+                        <div class="method GET">GET</div>
+                        <div class="path">/api/machine-types</div>
+                        <p class="desc">Live pricing and capabilities for all GPU and CPU instances available in your region.</p>
+                        <div class="copy-hint">Copy</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            Built with ⚡ specifically for Lightning AI Power Users.<br>
+            Managed by <strong>Lightning-API v2</strong>.
+        </footer>
+    </div>
+
+    <div id="toast" class="toast">Path copied to clipboard!</div>
+
+    <script>
+        function copyPath(path) {
+            const fullUrl = window.location.origin + path;
+            navigator.clipboard.writeText(fullUrl).then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
