@@ -50,7 +50,7 @@ While the official Lightning AI SDK is powerful, its documentation is often spar
 
 ### 2. Installation
 ```bash
-git clone https://github.com/your-repo/Lightning-Api.git
+git clone https://github.com/Myster-Pmf/Lightning.ai-REST-API.git
 cd Lightning-Api
 pip install -r requirements.txt
 ```
@@ -133,6 +133,22 @@ curl -H "X-Studio-Name: my-studio" \
 #### 4. **Query Parameters**
 ```bash
 curl "http://localhost:5000/api/v2/status?studio_name=my-studio&teamspace=my-team&username=my-user..."
+```
+
+---
+
+### 📝 Auth File Format (`auth.json`)
+
+When using the `auth_file` upload method (recommended), your JSON file should follow this structure:
+
+```json
+{
+  "studio_name": "my-awesome-studio",
+  "teamspace": "my-team",
+  "username": "john-doe",
+  "lightning_user_id": "0123...cdef",
+  "lightning_api_key": "sk-...def"
+}
 ```
 
 ---
@@ -272,4 +288,4 @@ For detailed guides on production deployment (Heroku, AWS, GCP), see [DEPLOYMENT
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
-Built with ⚡ by the Lightning API Team.
+Built with ⚡ by [Myster-Pmf](https://github.com/Myster-Pmf).
